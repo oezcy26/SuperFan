@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 User newuser = new User("Pedro", "Excobar");
                 binding.setUser(newuser);
+                System.out.println();
 
             }
         });
