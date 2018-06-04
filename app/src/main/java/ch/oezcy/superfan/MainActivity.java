@@ -33,8 +33,16 @@ public class MainActivity extends AppCompatActivity {
         final User user = new User("Hallo", "Friend");
         final ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
+        //for test
+        selection = selection.selectTeam(new Team("111", "Galatasaray"));
+        selection = selection.selectTeam(new Team("222", "Kasimpasa"));
+
+        binding.setSelection(selection);
+
+
+
         //to change the value, the whole object must be replaced in binding. it is not sufficient to change only an atttribut
-        binding.setUser(user);
+
 
 
 
@@ -57,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                     ((TextView)tableRow.findViewById(R.id.teamName)).setText(teamName);
                     ((TextView)tableRow.findViewById(R.id.teamPoints)).setText(String.valueOf(teamPoints));
 
-                    tableRow.setOnLongClickListener(new TableSelectLongclickListener());
+                    tableRow.setOnLongClickListener(new TableSelectLongclickListener(binding));
 
                     table.addView(tableRow);
 
@@ -86,12 +94,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private class TableSelectLongclickListener implements View.OnLongClickListener{
+        final ActivityMainBinding binding;
+        public TableSelectLongclickListener(ActivityMainBinding binding) {
+            this.binding = binding;
+        }
+
         @Override
         public boolean onLongClick(View v) {
             TableRow row = (TableRow)v;
             TextView textTeam = (TextView)row.getChildAt(0);
-            Team newTeam = new Team("", textTeam.getText().toString());
+            Team newTeam = new Team("xxx", textTeam.getText().toString());
             selection = selection.selectTeam(newTeam);
+            binding.setSelection(selection);
             System.out.println(selection.toString());
             return false;
         }

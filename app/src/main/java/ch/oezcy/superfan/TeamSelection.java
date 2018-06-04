@@ -18,7 +18,21 @@ public class TeamSelection {
         return newSelection;
     }
 
+    public Team getSelection1() {
+        return selection1;
+    }
 
+    public void setSelection1(Team selection1) {
+        this.selection1 = selection1;
+    }
+
+    public Team getSelection2() {
+        return selection2;
+    }
+
+    public void setSelection2(Team selection2) {
+        this.selection2 = selection2;
+    }
 
     @Override
     public String toString() {
