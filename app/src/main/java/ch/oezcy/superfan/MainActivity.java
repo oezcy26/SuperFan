@@ -1,5 +1,6 @@
 package ch.oezcy.superfan;
 
+import android.annotation.SuppressLint;
 import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -29,8 +30,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
 
-
-        final User user = new User("Hallo", "Friend");
         final ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         //for test
@@ -39,16 +38,10 @@ public class MainActivity extends AppCompatActivity {
 
         binding.setSelection(selection);
 
-
-
         //to change the value, the whole object must be replaced in binding. it is not sufficient to change only an atttribut
 
 
-
-
-
-
-        TableLayout table = (TableLayout) findViewById(R.id.table);
+        TableLayout table = findViewById(R.id.table);
 
         try {
             Elements tablerows = new MainLoader().execute().get();
@@ -59,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
                     String teamName = getTeamNameFromRow(row);
                     int teamPoints = getTeamPointsFromRow(row);
                     //TODO we need id for team (searching for results).. id = link zur seite des teams z.B: /vereine/galatasaray-istanbul/2018/
-
 
 
                     TableRow tableRow = (TableRow) LayoutInflater.from(this).inflate(R.layout.tablerow, null);
@@ -87,8 +79,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String getTeamNameFromRow(Element row){
-        String teamName = row.select("td[data-col-seq=2] a").text();
-        return teamName;
+        return row.select("td[data-col-seq=2] a").text();
     }
 
     private int getTeamPointsFromRow(Element row){
@@ -99,21 +90,25 @@ public class MainActivity extends AppCompatActivity {
     private String getTeamIdFromRow(Element row){
         Elements link = row.select("td[data-col-seq=2] a");
         String teamHomepage = link.attr("href");
-        return teamHomepage;
+
+        //extract name
+        String[] parts = teamHomepage.split("/");
+
+        return parts[2];
     }
 
 
 
     private class TableSelectLongclickListener implements View.OnLongClickListener{
         final ActivityMainBinding binding;
-        public TableSelectLongclickListener(ActivityMainBinding binding) {
+        TableSelectLongclickListener(ActivityMainBinding binding) {
             this.binding = binding;
         }
 
         @Override
         public boolean onLongClick(View v) {
             TableRow row = (TableRow)v;
-            TextView textTeam = (TextView)row.getChildAt(0);
+            TextView textTeam = (TextView)row.getChildAt(1);
             Team newTeam = new Team("xxx", textTeam.getText().toString());
             selection = selection.selectTeam(newTeam);
             binding.setSelection(selection);
@@ -124,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+    @SuppressLint("StaticFieldLeak")
     private class MainLoader extends AsyncTask<Void, Void, Elements>{
 
         @Override
