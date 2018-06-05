@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
             if(tablerows != null){
                 for(Element row : tablerows){
+                    String teamId = getTeamIdFromRow(row);
                     String teamName = getTeamNameFromRow(row);
                     int teamPoints = getTeamPointsFromRow(row);
                     //TODO we need id for team (searching for results).. id = link zur seite des teams z.B: /vereine/galatasaray-istanbul/2018/
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
                     TableRow tableRow = (TableRow) LayoutInflater.from(this).inflate(R.layout.tablerow, null);
                     ((TextView)tableRow.findViewById(R.id.teamName)).setText(teamName);
                     ((TextView)tableRow.findViewById(R.id.teamPoints)).setText(String.valueOf(teamPoints));
+                    ((TextView)tableRow.findViewById(R.id.teamId)).setText(teamId);
+
 
                     tableRow.setOnLongClickListener(new TableSelectLongclickListener(binding));
 
@@ -92,6 +95,14 @@ public class MainActivity extends AppCompatActivity {
         String teamPoints = row.select("td[data-col-seq=6]").text();
         return Integer.valueOf(teamPoints);
     }
+
+    private String getTeamIdFromRow(Element row){
+        Elements link = row.select("td[data-col-seq=2] a");
+        String teamHomepage = link.attr("href");
+        return teamHomepage;
+    }
+
+
 
     private class TableSelectLongclickListener implements View.OnLongClickListener{
         final ActivityMainBinding binding;

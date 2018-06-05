@@ -5,6 +5,9 @@
     android:paddingLeft="20px"
     android:paddingRight="10px">
     <TextView
+        android:id="@+id/teamId"
+        android:visibility="gone"/>
+    <TextView
         android:id="@+id/teamName"
         android:textStyle="bold"/>
     <TextView
