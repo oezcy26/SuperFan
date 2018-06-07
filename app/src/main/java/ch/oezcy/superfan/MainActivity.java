@@ -63,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
                     int teamPoints = ParseHelper.getTeamPointsFromRow(row);
 
 
+
+
                     TableRow tableRow = (TableRow) LayoutInflater.from(this).inflate(R.layout.tablerow, null);
                     ((TextView)tableRow.findViewById(R.id.teamName)).setText(teamName);
                     ((TextView)tableRow.findViewById(R.id.teamPoints)).setText(String.valueOf(teamPoints));
