@@ -1,9 +1,8 @@
-package ch.oezcy.superfan;
+package ch.oezcy.superfan.utility;
+
+import ch.oezcy.superfan.db.entity.Team;
 
 public class TeamSelection {
-
-    //TODO zwei object 'Team' -> erstelle ein objekt Team, welche abgefüllt werden beim Laden.
-    //TODO die id des Team wird dana verwendet um die Datenbank zu durchsuchen, denn in Spielabläufen steht nicht der korrekte name , vgl Basaksehir.
 
     private Team selection1;
     private Team selection2;
@@ -38,10 +37,10 @@ public class TeamSelection {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if(selection1 != null){
-            sb.append(this.selection1.getName() + " ");
+            sb.append(this.selection1.name + " ");
         }
         if(selection2 != null){
-            sb.append(this.selection2.getName());
+            sb.append(this.selection2.name);
         }
         return sb.toString();
     }

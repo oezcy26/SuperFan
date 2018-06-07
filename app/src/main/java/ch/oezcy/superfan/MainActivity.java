@@ -1,6 +1,7 @@
 package ch.oezcy.superfan;
 
 import android.annotation.SuppressLint;
+import android.arch.persistence.room.Room;
 import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -19,11 +20,18 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
+
+import ch.oezcy.superfan.background.TableLoader;
 import ch.oezcy.superfan.databinding.ActivityMainBinding;
+import ch.oezcy.superfan.db.AppDatabase;
+import ch.oezcy.superfan.db.entity.Team;
+import ch.oezcy.superfan.utility.ParseHelper;
+import ch.oezcy.superfan.utility.TeamSelection;
 
 public class MainActivity extends AppCompatActivity {
 
     private TeamSelection selection = new TeamSelection();
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +39,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         final ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "database-name").build();
 
         //for test
-        selection = selection.selectTeam(new Team("111", "Galatasaray"));
-        selection = selection.selectTeam(new Team("222", "Kasimpasa"));
+        selection = selection.selectTeam(new Team("111", "Galatasaray", (short)1));
+        selection = selection.selectTeam(new Team("222", "Kasimpasa", (short)2));
 
         binding.setSelection(selection);
 
@@ -44,14 +54,13 @@ public class MainActivity extends AppCompatActivity {
         TableLayout table = findViewById(R.id.table);
 
         try {
-            Elements tablerows = new MainLoader().execute().get();
+            Elements tablerows = new TableLoader(db).execute().get();
 
             if(tablerows != null){
                 for(Element row : tablerows){
-                    String teamId = getTeamIdFromRow(row);
-                    String teamName = getTeamNameFromRow(row);
-                    int teamPoints = getTeamPointsFromRow(row);
-                    //TODO we need id for team (searching for results).. id = link zur seite des teams z.B: /vereine/galatasaray-istanbul/2018/
+                    String teamId = ParseHelper.getTeamIdFromRow(row);
+                    String teamName = ParseHelper.getTeamNameFromRow(row);
+                    int teamPoints = ParseHelper.getTeamPointsFromRow(row);
 
 
                     TableRow tableRow = (TableRow) LayoutInflater.from(this).inflate(R.layout.tablerow, null);
@@ -78,24 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private String getTeamNameFromRow(Element row){
-        return row.select("td[data-col-seq=2] a").text();
-    }
 
-    private int getTeamPointsFromRow(Element row){
-        String teamPoints = row.select("td[data-col-seq=6]").text();
-        return Integer.valueOf(teamPoints);
-    }
-
-    private String getTeamIdFromRow(Element row){
-        Elements link = row.select("td[data-col-seq=2] a");
-        String teamHomepage = link.attr("href");
-
-        //extract name
-        String[] parts = teamHomepage.split("/");
-
-        return parts[2];
-    }
 
 
 
@@ -109,7 +101,9 @@ public class MainActivity extends AppCompatActivity {
         public boolean onLongClick(View v) {
             TableRow row = (TableRow)v;
             TextView textTeam = (TextView)row.getChildAt(1);
-            Team newTeam = new Team("xxx", textTeam.getText().toString());
+
+            Team newTeam = new Team("xxx", textTeam.getText().toString(), (short)1);
+
             selection = selection.selectTeam(newTeam);
             binding.setSelection(selection);
             System.out.println(selection.toString());
@@ -120,24 +114,5 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    @SuppressLint("StaticFieldLeak")
-    private class MainLoader extends AsyncTask<Void, Void, Elements>{
 
-        @Override
-        protected Elements doInBackground(Void... strings) {
-            Elements tablerows = null;
-            try {
-                Document doc = Jsoup.connect("https://www.fussballdaten.de/tuerkei/").get();
-
-                tablerows = doc.select("div#spieleWidgetTabelle233-container tbody tr");
-
-
-            } catch (IOException e) {
-                // TODO Fehlermeldung ausgeben, keine Verbindung zu livescores.
-                e.printStackTrace();
-            }
-
-            return tablerows;
-        }
-    }
 }
