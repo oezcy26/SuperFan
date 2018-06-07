@@ -80,16 +80,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
-
-
-
-
     }
-
-
-
-
 
     private class TableSelectLongclickListener implements View.OnLongClickListener{
         final ActivityMainBinding binding;

@@ -9,8 +9,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import ch.oezcy.superfan.db.AppDatabase;
 import ch.oezcy.superfan.db.entity.Team;
@@ -42,12 +41,8 @@ public class TableLoader extends AsyncTask<Void, Void, Elements> {
 
                     Team t = new Team(teamId,teamName, teamPoints);
                     db.teamDao().insertAll(t);
-
-
                 }
-
             }
-
 
         } catch (IOException e) {
             // TODO Fehlermeldung ausgeben, keine Verbindung zu livescores.
