@@ -17,7 +17,8 @@ public abstract class AppDatabase extends RoomDatabase {
 
     // code to make it SINGLETON
     private static AppDatabase INSTANCE;
-    static AppDatabase getDatabase(final Context context) {
+
+    public static AppDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
@@ -29,4 +30,6 @@ public abstract class AppDatabase extends RoomDatabase {
         }
         return INSTANCE;
     }
+
+
 }

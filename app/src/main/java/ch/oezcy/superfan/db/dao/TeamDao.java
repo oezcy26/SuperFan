@@ -14,7 +14,10 @@ import ch.oezcy.superfan.db.entity.Team;
 public interface TeamDao {
 
     @Query("SELECT * from team ORDER BY teamPoints DESC")
-    LiveData<List<Team>> getAllWords();
+    LiveData<List<Team>> getAllTeams();
+
+    @Insert
+    void insert(Team team);
 
     @Insert
     void insertAll(Team... teams);
