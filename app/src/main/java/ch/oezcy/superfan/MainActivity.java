@@ -9,24 +9,23 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
 import ch.oezcy.superfan.background.ActualTableLoader;
-import ch.oezcy.superfan.background.GamesLoader;
+import ch.oezcy.superfan.background.GamedayLoader;
+import ch.oezcy.superfan.background.TeamComparer;
 import ch.oezcy.superfan.databinding.ActivityMainBinding;
 import ch.oezcy.superfan.db.AppDatabase;
+import ch.oezcy.superfan.db.entity.Game;
 import ch.oezcy.superfan.db.entity.Team;
-import ch.oezcy.superfan.utility.ParseHelper;
 import ch.oezcy.superfan.utility.TeamSelection;
 
 public class MainActivity extends AppCompatActivity {
 
     private TeamSelection selection = new TeamSelection();
+
     private AppDatabase db;
     private ActivityMainBinding binding;
 
@@ -61,9 +60,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        //load games (previous and coming games)
-        new GamesLoader(db).execute();
-
     }
 
     private class TableSelectLongclickListener implements View.OnLongClickListener{
@@ -82,6 +78,18 @@ public class MainActivity extends AppCompatActivity {
             selection = selection.selectTeam(newTeam);
             this.binding.setSelection(selection);
             System.out.println(selection.toString());
+
+            if(selection.getSelectedTeam1() != null && selection.getSelectedTeam2() != null){
+                try {
+                    List<Game> games = new TeamComparer(db).execute(selection).get();
+
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
             return false;
         }
     }

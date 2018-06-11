@@ -2,101 +2,75 @@ package ch.oezcy.superfan.background;
 
 import android.os.AsyncTask;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-import java.io.IOException;
-
+import ch.oezcy.superfan.ConfigConstants;
 import ch.oezcy.superfan.db.AppDatabase;
 import ch.oezcy.superfan.db.entity.Game;
+import ch.oezcy.superfan.db.entity.Gameday;
 
-/**
- * Loads one gameday and stores in DB
- */
-
-public class GamedayLoader extends AsyncTask<Short,Void,Boolean> {
-
-    private final short HOMETEAM_COLUMN = 2;
-    private final short GUESTTEAM_COLUMN = 4;
-    private final String URLPATTERN = "https://www.fussballdaten.de/tuerkei/2018/%d/";
-    private final AppDatabase db;
-
+public class GamedayLoader extends AsyncTask<Void,Void,Void> {
+    private AppDatabase db;
     public GamedayLoader(AppDatabase db) {
         this.db = db;
     }
 
     @Override
-    protected Boolean doInBackground(Short... gamedaynbr) {
-        Elements tablerows;
-        short gameday = gamedaynbr[0];
+    protected Void doInBackground(Void... voids) {
 
-        if(gamedaynbr.length == 1){
-
-            String url = String.format(URLPATTERN, gamedaynbr);
-
-            Document doc = null;
-            try {
-                doc = Jsoup.connect(url).get();
-                tablerows = doc.select("table.table-leistungsdaten");
-                Elements gamerows = tablerows.select("tr[data-key]");
-
-                for(Element game : gamerows){
-                    String homeId = getTeamId(game, HOMETEAM_COLUMN);
-                    String guestId = getTeamId(game, GUESTTEAM_COLUMN);
-
-                    String score = getScore(game);
-                    String[] scores = score.split(":");
-
-                    short homeGoals = Short.valueOf(scores[0]);
-                    short guestGoals = Short.valueOf(scores[1]);
-                    String winner = null;
-
-                    if(homeGoals > guestGoals){
-                        winner = homeId;
-                    }else if(guestGoals > homeGoals){
-                        winner = guestId;
-                    }
-                    // String stays null for draw
-                    Game newGame = new Game(gameday, homeId, guestId, homeGoals, guestGoals, winner);
-                    db.gameDao().insertAll(newGame);
+        for (int i = 0; i < ConfigConstants.GAMEDAY_AMOUNT; i++) {
+            Gameday gameday = db.gamedayDao().selectById((short) (i + 1));
+            if(gameday == null){
+                gameday = new Gameday((short) (i + 1));
 
 
-
-                }
-
-                Game[] games = db.gameDao().loadAllGames();
-                for(Game g : games){
-                    System.out.println(g.toString() + "\n");
+                try {
+                    // to no request to fast
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
 
 
-            } catch (IOException e) {
-                e.printStackTrace();
+                loadDataFor(gameday);
+            }else if(!gameday.finished){
+                deleteDataFor(gameday);
+                loadDataFor(gameday);
+                //break !
+
             }
 
-            return true;
-        }else{
-            return false;
+            System.out.println("Gameday loaded : " + gameday.nbr);
+            /*  //test
+            List<Game> loadedGames = db.gameDao().loadAllGamesByGameday(gameday.nbr);
+            for(Game g : loadedGames){
+                System.out.println(g.toString() + "\n");
+            }
+            */
         }
+
+        List<Gameday> gamedays = db.gamedayDao().selectAllGamedays();
+        for(Gameday gd : gamedays){
+            System.out.println(gd.toString() + "\n");
+        }
+
+        return null;
     }
 
+    private void loadDataFor(Gameday gd){
 
-    public static String getTeamId(Element row, short teamColumn){
-        Elements link = row.select("td[data-col-seq=" + teamColumn + "] a");
-        String teamId = link.attr("href");
+            Boolean notAllGamesPlayed = new GameLoader(db).loadGamesForGameday(gd.nbr);
+            if(notAllGamesPlayed){
+                gd.finished = false;
 
-        //extract name
-        String[] parts = teamId.split("/");
-
-        return parts[2];
+            }else{
+                gd.finished = true;
+            }
+            db.gamedayDao().insertAll(gd);
     }
 
-    public String getScore(Element row){
-        String score = row.select("td[data-col-seq=3] a span[id]").text();
-        return score;
+    private void deleteDataFor(Gameday gd){
+        db.gameDao().deleteAllByGamedayId(gd.nbr);
     }
-
-
 }
