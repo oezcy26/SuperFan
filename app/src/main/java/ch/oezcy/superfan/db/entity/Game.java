@@ -2,6 +2,7 @@ package ch.oezcy.superfan.db.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
@@ -20,8 +21,14 @@ public class Game {
     @ColumnInfo(name = "home_id")
     public String homeId;
 
+    @ColumnInfo(name = "home_name")
+    public final String homeName;
+
     @ColumnInfo(name = "guest_id")
     public String guestId;
+
+    @ColumnInfo(name = "guest_name")
+    public final String guestName;
 
     @ColumnInfo(name = "home_goals")
     public short homeGoals;
@@ -31,10 +38,12 @@ public class Game {
 
     public String winner; //teamId or null for draw.
 
-    public Game(short gamedayNbr, boolean played,  String homeId, String guestId) {
+    public Game(short gamedayNbr, boolean played,  String homeId, String homeName, String guestId, String guestName) {
         this.gamedayNbr = gamedayNbr;
         this.homeId = homeId;
+        this.homeName = homeName;
         this.guestId = guestId;
+        this.guestName = guestName;
         this.played = played;
 
     }
@@ -42,7 +51,7 @@ public class Game {
     @Override
     public String toString() {
         String div = "\t|\t";
-        String str = gamedayNbr + div + played + div + homeId + div + guestId + div + homeGoals + div + guestGoals + div + winner;
+        String str = gamedayNbr + div + played + div + homeId + div + homeName + div + guestId + div + guestName + div + homeGoals + div + guestGoals + div + winner;
         return str;
     }
 }

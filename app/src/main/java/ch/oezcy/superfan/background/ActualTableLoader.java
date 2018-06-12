@@ -39,7 +39,7 @@ public class ActualTableLoader extends AsyncTask<Void, Void, List<Team>> {
             tablerows = doc.select("div#spieleWidgetTabelle233-container tbody tr");
 
             if (tablerows != null) {
-                //db.teamDao().deleteAll();
+                db.teamDao().deleteAll();
                 for (Element row : tablerows) {
                     String teamId = ParseHelper.getTeamIdFromRow(row);
                     String teamName = ParseHelper.getTeamNameFromRow(row);
@@ -47,7 +47,7 @@ public class ActualTableLoader extends AsyncTask<Void, Void, List<Team>> {
 
                     Team t = new Team(teamId, teamName, teamPoints);
                     teams.add(t);
-                    //db.teamDao().insertAll(t);
+                    db.teamDao().insertAll(t);
                 }
             }
 

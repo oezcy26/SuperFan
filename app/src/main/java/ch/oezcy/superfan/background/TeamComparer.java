@@ -24,7 +24,21 @@ public class TeamComparer extends AsyncTask<TeamSelection, Void, List<Game>> {
 
         TeamSelection selection = teamSelections[0];
 
+        //DEBUGGING: see all games in console
+        Game[] allGames = db.gameDao().loadAllGames();
+        for(Game g : allGames){
+            System.out.println(g);
+        }
+        System.out.println();
+        System.out.println("Searching for : " + selection.getSelectedTeam1().id +" "+ selection.getSelectedTeam2().id);
+
+
         List<Game> games = db.gameDao().getGamesForTeams(selection.getSelectedTeam1().id, selection.getSelectedTeam2().id);
+
+
+
+
+
         return games;
 
     }

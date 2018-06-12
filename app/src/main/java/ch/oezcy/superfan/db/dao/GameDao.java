@@ -25,6 +25,8 @@ public interface GameDao {
     @Query("DELETE FROM game WHERE gameday_nbr = :nbr")
     void deleteAllByGamedayId(short nbr);
 
-    @Query("SELECT * FROM game WHERE (home_id = :teamId1 AND guest_id = :teamId2) OR (home_id = :teamId2 AND guest_id = :teamId1)")
+    @Query("SELECT * FROM game " +
+            "WHERE (home_id = :teamId1 AND guest_id = :teamId2) OR (home_id = :teamId2 AND guest_id = :teamId1) " +
+            "ORDER BY gameday_nbr ASC")
     List<Game> getGamesForTeams(String teamId1, String teamId2);
 }

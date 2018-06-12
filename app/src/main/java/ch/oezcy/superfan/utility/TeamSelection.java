@@ -1,11 +1,17 @@
 package ch.oezcy.superfan.utility;
 
+import ch.oezcy.superfan.db.entity.Game;
 import ch.oezcy.superfan.db.entity.Team;
 
 public class TeamSelection {
 
     private Team selectedTeam1;
     private Team selectedTeam2;
+
+    private Game foundGame1;
+    private Game foundGame2;
+
+
 
     //new object because otherwise binding not works
     public TeamSelection selectTeam(Team sel){
@@ -31,6 +37,22 @@ public class TeamSelection {
 
     public void setSelectedTeam2(Team selectedTeam2) {
         this.selectedTeam2 = selectedTeam2;
+    }
+
+    public Game getFoundGame1() {
+        return foundGame1;
+    }
+
+    public void setFoundGame1(Game foundGame1) {
+        this.foundGame1 = foundGame1;
+    }
+
+    public Game getFoundGame2() {
+        return foundGame2;
+    }
+
+    public void setFoundGame2(Game foundGame2) {
+        this.foundGame2 = foundGame2;
     }
 
     @Override

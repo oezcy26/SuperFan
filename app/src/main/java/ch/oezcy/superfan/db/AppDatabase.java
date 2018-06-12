@@ -9,20 +9,22 @@ import android.support.annotation.NonNull;
 
 import ch.oezcy.superfan.db.dao.GameDao;
 import ch.oezcy.superfan.db.dao.GamedayDao;
+import ch.oezcy.superfan.db.dao.TeamDao;
 import ch.oezcy.superfan.db.entity.Game;
 import ch.oezcy.superfan.db.entity.Gameday;
+import ch.oezcy.superfan.db.entity.Team;
 
 import static ch.oezcy.superfan.ConfigConstants.GAMEDAY_AMOUNT;
 
 
-@Database(entities = {Game.class, Gameday.class}, version = 1)
+@Database(entities = {Team.class, Game.class, Gameday.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
 
 
 
 
 
-   // public abstract TeamDao teamDao();
+    public abstract TeamDao teamDao();
     public abstract GameDao gameDao();
     public abstract GamedayDao gamedayDao();
 

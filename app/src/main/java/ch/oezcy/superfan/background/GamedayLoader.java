@@ -19,18 +19,21 @@ public class GamedayLoader extends AsyncTask<Void,Void,Void> {
     @Override
     protected Void doInBackground(Void... voids) {
 
+
+
         for (int i = 0; i < ConfigConstants.GAMEDAY_AMOUNT; i++) {
             Gameday gameday = db.gamedayDao().selectById((short) (i + 1));
             if(gameday == null){
                 gameday = new Gameday((short) (i + 1));
 
-
+                /*
                 try {
                     // to no request to fast
                     Thread.sleep(300);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                */
 
 
                 loadDataFor(gameday);

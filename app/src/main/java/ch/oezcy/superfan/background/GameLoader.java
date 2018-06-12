@@ -47,14 +47,16 @@ public class GameLoader{
             for(int i = 0; i < gamerows.size(); i++){
 
                 String homeId = getTeamId(gamerows.get(i), HOMETEAM_COLUMN);
+                String homeName = db.teamDao().getNameById(homeId);
                 String guestId = getTeamId(gamerows.get(i), GUESTTEAM_COLUMN);
+                String guestName = db.teamDao().getNameById(guestId);
                 boolean played = isGamePlayed(gamerows.get(i));
                 Game newGame;
 
                 if(played){
-                    newGame = extractResults(gamedaynbr, gamerows.get(i), homeId, guestId, played);
+                    newGame = extractResults(gamedaynbr, gamerows.get(i), homeId, homeName, guestId, guestName, played);
                 }else{
-                    newGame = new Game(gamedaynbr, played, homeId, guestId);
+                    newGame = new Game(gamedaynbr, played, homeId, homeName, guestId, guestName);
                     notAllGamesPlayed = true;
                 }
 
@@ -75,7 +77,7 @@ public class GameLoader{
     }
 
     @NonNull
-    private Game extractResults(short gameday, Element game, String homeId, String guestId, boolean played) {
+    private Game extractResults(short gameday, Element game, String homeId, String homename, String guestId, String guestName, boolean played) {
         Game newGame;
         String score = getScore(game);
         String[] scores = score.split(":");
@@ -90,7 +92,7 @@ public class GameLoader{
             winner = guestId;
             // String stays null for draw
         }
-        newGame = new Game(gameday, played, homeId, guestId);
+        newGame = new Game(gameday, played, homeId, homename, guestId, guestName);
         newGame.homeGoals = homeGoals;
         newGame.guestGoals = guestGoals;
         newGame.winner = winner;

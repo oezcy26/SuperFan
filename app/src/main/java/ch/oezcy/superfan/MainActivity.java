@@ -25,6 +25,8 @@ import ch.oezcy.superfan.utility.TeamSelection;
 public class MainActivity extends AppCompatActivity {
 
     private TeamSelection selection = new TeamSelection();
+    private Game game1;
+    private Game game2;
 
     private AppDatabase db;
     private ActivityMainBinding binding;
@@ -71,9 +73,17 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onLongClick(View v) {
             TableRow row = (TableRow)v;
-            TextView textTeam = (TextView)row.getChildAt(1);
+            TextView teamidV = (TextView)row.getChildAt(0);
+            TextView teamNameV = (TextView)row.getChildAt(1);
+            TextView teamPointsV = (TextView)row.getChildAt(2);
 
-            Team newTeam = new Team("xxx", textTeam.getText().toString(), (short)1);
+            String teamid = teamidV.getText().toString();
+            String teamName = teamNameV.getText().toString();
+            short teamPoints = Short.parseShort(teamPointsV.getText().toString());
+
+
+
+            Team newTeam = new Team(teamid, teamName, teamPoints);
 
             selection = selection.selectTeam(newTeam);
             this.binding.setSelection(selection);
@@ -82,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
             if(selection.getSelectedTeam1() != null && selection.getSelectedTeam2() != null){
                 try {
                     List<Game> games = new TeamComparer(db).execute(selection).get();
+                    binding.setGame1(games.get(0));
+
 
 
                 } catch (InterruptedException e) {
