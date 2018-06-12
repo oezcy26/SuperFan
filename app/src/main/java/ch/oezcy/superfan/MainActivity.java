@@ -81,26 +81,26 @@ public class MainActivity extends AppCompatActivity {
             String teamName = teamNameV.getText().toString();
             short teamPoints = Short.parseShort(teamPointsV.getText().toString());
 
-
-
             Team newTeam = new Team(teamid, teamName, teamPoints);
 
             selection = selection.selectTeam(newTeam);
             this.binding.setSelection(selection);
-            System.out.println(selection.toString());
 
+            //load data for games
             if(selection.getSelectedTeam1() != null && selection.getSelectedTeam2() != null){
                 try {
                     List<Game> games = new TeamComparer(db).execute(selection).get();
                     binding.setGame1(games.get(0));
-
-
+                    binding.setGame2(games.get(1));
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
+            }else{
+                binding.setGame1(null);
+                binding.setGame2(null);
             }
             return false;
         }

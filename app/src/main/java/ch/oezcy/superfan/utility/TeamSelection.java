@@ -8,17 +8,24 @@ public class TeamSelection {
     private Team selectedTeam1;
     private Team selectedTeam2;
 
-    private Game foundGame1;
-    private Game foundGame2;
-
-
 
     //new object because otherwise binding not works
     public TeamSelection selectTeam(Team sel){
         TeamSelection newSelection = new TeamSelection();
 
-        newSelection.selectedTeam1 = sel;
-        newSelection.selectedTeam2 = this.selectedTeam1;
+        if(selectedTeam1 != null && selectedTeam2 != null){
+            //clear selection when 2 are selected
+            newSelection.selectedTeam1 = sel;
+            newSelection.selectedTeam2 = null;
+        }else if(selectedTeam1 != null){
+            //add second selection when one is selected
+            newSelection.selectedTeam1 = selectedTeam1;
+            newSelection.selectedTeam2 = sel;
+        }else{
+            newSelection.selectedTeam1 = sel;
+            newSelection.selectedTeam2 = this.selectedTeam1;
+        }
+
 
         return newSelection;
     }
@@ -39,21 +46,6 @@ public class TeamSelection {
         this.selectedTeam2 = selectedTeam2;
     }
 
-    public Game getFoundGame1() {
-        return foundGame1;
-    }
-
-    public void setFoundGame1(Game foundGame1) {
-        this.foundGame1 = foundGame1;
-    }
-
-    public Game getFoundGame2() {
-        return foundGame2;
-    }
-
-    public void setFoundGame2(Game foundGame2) {
-        this.foundGame2 = foundGame2;
-    }
 
     @Override
     public String toString() {

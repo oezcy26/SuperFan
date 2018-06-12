@@ -44,6 +44,7 @@ public class GameLoader{
 
             Game[] games = new Game[gamerows.size()];
 
+
             for(int i = 0; i < gamerows.size(); i++){
 
                 String homeId = getTeamId(gamerows.get(i), HOMETEAM_COLUMN);

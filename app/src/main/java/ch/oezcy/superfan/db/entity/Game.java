@@ -50,8 +50,9 @@ public class Game {
 
     @Override
     public String toString() {
+        String div3 = "\t\t\t|\t";
         String div = "\t|\t";
-        String str = gamedayNbr + div + played + div + homeId + div + homeName + div + guestId + div + guestName + div + homeGoals + div + guestGoals + div + winner;
+        String str = gamedayNbr + div + played + div + homeId + div3 + homeName + div + guestId + div3 + guestName + div + homeGoals + div + guestGoals + div + winner;
         return str;
     }
 }

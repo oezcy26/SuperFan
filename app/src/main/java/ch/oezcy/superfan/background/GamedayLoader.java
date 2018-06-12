@@ -2,6 +2,13 @@ package ch.oezcy.superfan.background;
 
 import android.os.AsyncTask;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -9,6 +16,8 @@ import ch.oezcy.superfan.ConfigConstants;
 import ch.oezcy.superfan.db.AppDatabase;
 import ch.oezcy.superfan.db.entity.Game;
 import ch.oezcy.superfan.db.entity.Gameday;
+import ch.oezcy.superfan.db.entity.Team;
+import ch.oezcy.superfan.utility.ParseHelper;
 
 public class GamedayLoader extends AsyncTask<Void,Void,Void> {
     private AppDatabase db;
@@ -19,7 +28,7 @@ public class GamedayLoader extends AsyncTask<Void,Void,Void> {
     @Override
     protected Void doInBackground(Void... voids) {
 
-
+        loadAndInsertTeams();
 
         for (int i = 0; i < ConfigConstants.GAMEDAY_AMOUNT; i++) {
             Gameday gameday = db.gamedayDao().selectById((short) (i + 1));
@@ -34,7 +43,6 @@ public class GamedayLoader extends AsyncTask<Void,Void,Void> {
                     e.printStackTrace();
                 }
                 */
-
 
                 loadDataFor(gameday);
             }else if(!gameday.finished){
@@ -75,5 +83,35 @@ public class GamedayLoader extends AsyncTask<Void,Void,Void> {
 
     private void deleteDataFor(Gameday gd){
         db.gameDao().deleteAllByGamedayId(gd.nbr);
+    }
+
+    private List<Team> loadAndInsertTeams() {
+        Elements tablerows = null;
+        List<Team> teams = new ArrayList<>();
+        try {
+            Document doc = Jsoup.connect("https://www.fussballdaten.de/tuerkei/").get();
+
+            tablerows = doc.select("div#spieleWidgetTabelle233-container tbody tr");
+
+            if (tablerows != null) {
+                db.teamDao().deleteAll();
+                for (Element row : tablerows) {
+                    String teamId = ParseHelper.getTeamIdFromRow(row);
+                    String teamName = ParseHelper.getTeamNameFromRow(row);
+                    short teamPoints = ParseHelper.getTeamPointsFromRow(row);
+
+                    Team t = new Team(teamId, teamName, teamPoints);
+                    teams.add(t);
+                    db.teamDao().insertAll(t);
+                }
+            }
+
+
+        } catch (IOException e) {
+            // TODO Fehlermeldung
+            e.printStackTrace();
+        }
+
+        return teams;
     }
 }
