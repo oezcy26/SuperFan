@@ -24,12 +24,10 @@ import ch.oezcy.superfan.utility.TeamSelection;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TeamSelection selection = new TeamSelection();
-    private Game game1;
-    private Game game2;
+    public static TeamSelection selection = new TeamSelection();
 
     private AppDatabase db;
-    private ActivityMainBinding binding;
+    public static ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                     ((TextView)tableRow.findViewById(R.id.teamPoints)).setText(String.valueOf(team.teamPoints));
                     ((TextView)tableRow.findViewById(R.id.teamId)).setText(team.id);
 
-                    tableRow.setOnLongClickListener(new TableSelectLongclickListener(binding));
+                    tableRow.setOnLongClickListener(new TableOnLongClickListener(db));
 
                     table.addView(tableRow);
                 }
@@ -64,47 +62,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private class TableSelectLongclickListener implements View.OnLongClickListener{
-        final ActivityMainBinding binding;
-        TableSelectLongclickListener(ActivityMainBinding binding) {
-            this.binding = binding;
-        }
 
-        @Override
-        public boolean onLongClick(View v) {
-            // extract team-infos from row
-            TableRow row = (TableRow)v;
-            TextView teamidV = (TextView)row.getChildAt(0);
-            TextView teamNameV = (TextView)row.getChildAt(1);
-            TextView teamPointsV = (TextView)row.getChildAt(2);
-
-            String teamid = teamidV.getText().toString();
-            String teamName = teamNameV.getText().toString();
-            short teamPoints = Short.parseShort(teamPointsV.getText().toString());
-
-            // make new Team and set selection
-            Team newTeam = new Team(teamid, teamName, teamPoints);
-            selection = selection.selectTeam(newTeam);
-            this.binding.setSelection(selection);
-
-            // load data for games
-            if(selection.getSelectedTeam1() != null && selection.getSelectedTeam2() != null){
-                try {
-                    List<Game> games = new TeamComparer(db).execute(selection).get();
-                    binding.setGame1(games.get(0));
-                    binding.setGame2(games.get(1));
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }else{
-                binding.setGame1(null);
-                binding.setGame2(null);
-            }
-            return false;
-        }
-    }
 
 }
