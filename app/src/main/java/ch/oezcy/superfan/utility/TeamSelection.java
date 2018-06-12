@@ -18,6 +18,10 @@ public class TeamSelection {
             newSelection.selectedTeam1 = sel;
             newSelection.selectedTeam2 = null;
         }else if(selectedTeam1 != null){
+            if(selectedTeam1.equals(sel)){
+               //deselect when same team selected
+               return newSelection;
+            }
             //add second selection when one is selected
             newSelection.selectedTeam1 = selectedTeam1;
             newSelection.selectedTeam2 = sel;

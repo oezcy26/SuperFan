@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onLongClick(View v) {
+            // extract team-infos from row
             TableRow row = (TableRow)v;
             TextView teamidV = (TextView)row.getChildAt(0);
             TextView teamNameV = (TextView)row.getChildAt(1);
@@ -81,12 +82,12 @@ public class MainActivity extends AppCompatActivity {
             String teamName = teamNameV.getText().toString();
             short teamPoints = Short.parseShort(teamPointsV.getText().toString());
 
+            // make new Team and set selection
             Team newTeam = new Team(teamid, teamName, teamPoints);
-
             selection = selection.selectTeam(newTeam);
             this.binding.setSelection(selection);
 
-            //load data for games
+            // load data for games
             if(selection.getSelectedTeam1() != null && selection.getSelectedTeam2() != null){
                 try {
                     List<Game> games = new TeamComparer(db).execute(selection).get();

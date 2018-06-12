@@ -22,5 +22,13 @@ public class Team {
         this.teamPoints = teamPoints;
     }
 
-
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Team){
+            Team t = (Team) obj;
+            return this.id == t.id;
+        }else{
+            return false;
+        }
+    }
 }

@@ -23,6 +23,7 @@ public class SplashActivity extends AppCompatActivity {
                 try {
                     super.run();
                     //load games (previous and coming games)
+                    Thread.sleep(5000);
                     new GamedayLoader(db).execute();
                 } catch (Exception e) {
 

@@ -9,6 +9,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Bitte warten sie bis die aktuellen Spieldaten heruntergeladen sind. Beim ersten Start kann das bis zu 2 Minuten dauern."/>
+        android:text="Bitte warten..."/>
 
 </android.support.constraint.ConstraintLayout>
