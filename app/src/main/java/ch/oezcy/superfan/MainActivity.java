@@ -9,6 +9,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -18,6 +19,7 @@ import ch.oezcy.superfan.background.GamedayLoader;
 import ch.oezcy.superfan.background.TeamComparer;
 import ch.oezcy.superfan.databinding.ActivityMainBinding;
 import ch.oezcy.superfan.db.AppDatabase;
+import ch.oezcy.superfan.db.accessor.ActualTableAccessor;
 import ch.oezcy.superfan.db.entity.Game;
 import ch.oezcy.superfan.db.entity.Team;
 import ch.oezcy.superfan.utility.TeamSelection;
@@ -39,6 +41,29 @@ public class MainActivity extends AppCompatActivity {
 
         //load the actual table
         TableLayout table = findViewById(R.id.table);
+
+        List<Team> teams = new ArrayList<>();
+        try {
+            teams = new ActualTableAccessor(db).execute().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        for(Team team : teams){
+            TableRow tableRow = (TableRow) LayoutInflater.from(this).inflate(R.layout.tablerow, null);
+            ((TextView)tableRow.findViewById(R.id.teamName)).setText(team.name);
+            ((TextView)tableRow.findViewById(R.id.teamPoints)).setText(String.valueOf(team.teamPoints));
+            ((TextView)tableRow.findViewById(R.id.teamId)).setText(team.id);
+
+            tableRow.setOnLongClickListener(new TableOnLongClickListener(getApplicationContext(), db));
+
+            table.addView(tableRow);
+        }
+
+
+        //NICHT MEHR HIER LADEN. DAS MACHEN WIR IN BEFORESTARTDATALOADER.
+        /*
         try {
             List<Team> teams = new ActualTableLoader(db).execute().get();
 
@@ -49,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                     ((TextView)tableRow.findViewById(R.id.teamPoints)).setText(String.valueOf(team.teamPoints));
                     ((TextView)tableRow.findViewById(R.id.teamId)).setText(team.id);
 
-                    tableRow.setOnLongClickListener(new TableOnLongClickListener(db));
+                    tableRow.setOnLongClickListener(new TableOnLongClickListener(getApplicationContext(), db));
 
                     table.addView(tableRow);
                 }
@@ -59,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+        */
 
     }
 

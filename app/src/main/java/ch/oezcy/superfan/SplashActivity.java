@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import ch.oezcy.superfan.background.BeforeStartDataLoader;
 import ch.oezcy.superfan.background.GamedayLoader;
 import ch.oezcy.superfan.db.AppDatabase;
 
@@ -16,6 +17,10 @@ public class SplashActivity extends AppCompatActivity {
 
         final AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
 
+        new BeforeStartDataLoader(this, db).execute();
+
+
+        /*
         Thread welcomeThread = new Thread() {
 
             @Override
@@ -23,8 +28,9 @@ public class SplashActivity extends AppCompatActivity {
                 try {
                     super.run();
                     //load games (previous and coming games)
-                    Thread.sleep(5000);
-                    new GamedayLoader(db).execute();
+                    Thread.sleep(0);
+
+                    //new GamedayLoader(db).execute();
                 } catch (Exception e) {
 
                 } finally {
@@ -37,5 +43,12 @@ public class SplashActivity extends AppCompatActivity {
             }
         };
         welcomeThread.start();
+        */
+    }
+
+    public void startMainActivity() {
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
+        finish();
     }
 }
