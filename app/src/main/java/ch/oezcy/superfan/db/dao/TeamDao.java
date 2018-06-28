@@ -14,8 +14,8 @@ import ch.oezcy.superfan.db.entity.Team;
 @Dao
 public interface TeamDao {
 
-    @Query("SELECT * from team ORDER BY teamPoints DESC")
-    List<Team> getTeamOrderPoints();
+    @Query("SELECT * from team ORDER BY ranking ASC")
+    List<Team> getTeamsInRanking();
 
     @Query("SELECT name FROM team WHERE id = :id")
     String getNameById(String id);

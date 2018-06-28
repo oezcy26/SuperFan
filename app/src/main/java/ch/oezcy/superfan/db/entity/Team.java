@@ -15,11 +15,13 @@ public class Team {
 
     public String name;
     public short teamPoints;
+    public short ranking;
 
-    public Team(String id, String name, short teamPoints) {
+    public Team(String id, String name, short teamPoints, short ranking) {
         this.id = id;
         this.name = name;
         this.teamPoints = teamPoints;
+        this.ranking = ranking;
     }
 
     @Override
@@ -30,5 +32,10 @@ public class Team {
         }else{
             return false;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "" + ranking + "\t" + name + "\t" + teamPoints;
     }
 }

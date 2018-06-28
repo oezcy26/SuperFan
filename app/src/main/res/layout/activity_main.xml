@@ -29,6 +29,7 @@
                 android:id="@+id/table"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"></TableLayout>
+
         </ScrollView>
 
         <LinearLayout
@@ -56,7 +57,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{game1 == null ? null : String.valueOf(game1.gamedayNbr)}"/>
+                    android:text="@{game1 == null ? null : String.valueOf(game1.gameday)}"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -68,7 +69,6 @@
                     android:layout_height="wrap_content"
                     android:text="@{game1 == null ? null : String.valueOf(game1.homeGoals)}" />
 
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -78,8 +78,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@{game1.guestName}"/>
-
-
 
             </LinearLayout>
 
@@ -91,7 +89,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{game2 == null ? null : String.valueOf(game2.gamedayNbr)}"/>
+                    android:text="@{game2 == null ? null : String.valueOf(game2.gameday)}"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -114,14 +112,21 @@
                     android:layout_height="wrap_content"
                     android:text="@{game2.guestName}"/>
 
-
-
             </LinearLayout>
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Log Teams"
+                android:onClick="logTeams"/>
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Log Games"
+                android:onClick="logGames"/>
 
         </LinearLayout>
-
 
     </LinearLayout>
 

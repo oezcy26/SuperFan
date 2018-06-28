@@ -41,7 +41,7 @@ public class TableOnLongClickListener implements View.OnLongClickListener {
         short teamPoints = Short.parseShort(teamPointsV.getText().toString());
 
         // make new Team and set selection
-        Team newTeam = new Team(teamid, teamName, teamPoints);
+        Team newTeam = new Team(teamid, teamName, teamPoints, (short)0);
         selection = selection.selectTeam(newTeam);
         binding.setSelection(selection);
 

@@ -6,7 +6,7 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity(indices = {@Index(value = {"gameday_nbr", "home_id", "guest_id"}, unique = true)})
+@Entity(indices = {@Index(value = {"gameday", "home_id", "guest_id"}, unique = true)})
 public class Game {
 
     @PrimaryKey(autoGenerate = true)
@@ -15,8 +15,8 @@ public class Game {
     @ColumnInfo(name = "played")
     public boolean played;
 
-    @ColumnInfo(name = "gameday_nbr")
-    public short gamedayNbr;
+    @ColumnInfo(name = "gameday")
+    public short gameday;
 
     @ColumnInfo(name = "home_id")
     public String homeId;
@@ -38,8 +38,8 @@ public class Game {
 
     public String winner; //teamId or null for draw.
 
-    public Game(short gamedayNbr, boolean played,  String homeId, String homeName, String guestId, String guestName) {
-        this.gamedayNbr = gamedayNbr;
+    public Game(short gameday, boolean played,  String homeId, String homeName, String guestId, String guestName) {
+        this.gameday = gameday;
         this.homeId = homeId;
         this.homeName = homeName;
         this.guestId = guestId;
@@ -52,7 +52,7 @@ public class Game {
     public String toString() {
         String div3 = "\t\t\t|\t";
         String div = "\t|\t";
-        String str = gamedayNbr + div + played + div + homeId + div3 + homeName + div + guestId + div3 + guestName + div + homeGoals + div + guestGoals + div + winner;
+        String str = gameday + div + played + div + homeId + div3 + homeName + div + guestId + div3 + guestName + div + homeGoals + div + guestGoals + div + winner;
         return str;
     }
 }

@@ -16,17 +16,17 @@ public interface GameDao {
     @Insert
     void insertAll(Game... games);
 
-    @Query("SELECT * FROM game")
-    public Game[] loadAllGames();
+    @Query("SELECT * FROM game ORDER BY gameday ASC")
+    List<Game> loadAllGames();
 
-    @Query("SELECT * FROM game g WHERE g.gameday_nbr = :nbr")
+    @Query("SELECT * FROM game g WHERE g.gameday = :nbr")
     List<Game> loadAllGamesByGameday(short nbr);
 
-    @Query("DELETE FROM game WHERE gameday_nbr = :nbr")
+    @Query("DELETE FROM game WHERE gameday = :nbr")
     void deleteAllByGamedayId(short nbr);
 
     @Query("SELECT * FROM game " +
             "WHERE (home_id = :teamId1 AND guest_id = :teamId2) OR (home_id = :teamId2 AND guest_id = :teamId1) " +
-            "ORDER BY gameday_nbr ASC")
+            "ORDER BY gameday ASC")
     List<Game> getGamesForTeams(String teamId1, String teamId2);
 }

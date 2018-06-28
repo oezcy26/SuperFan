@@ -25,9 +25,8 @@ public class BeforeStartDataLoader extends AsyncTask<Void, Void, Void> {
         //some heavy processing resulting in a Data String
 
         new ActualTableLoader(db).doIt();
-        //TODO was machen, wenn keine Verbindung..
 
-        //TODO Load Gamedaydata https://www.fussballdaten.de/tuerkei/spielplan/
+        new GameDataLoader(db).doIt();
 
         return null;
     }
@@ -36,8 +35,6 @@ public class BeforeStartDataLoader extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void aVoid) {
 
         current.startMainActivity();
-
-
 
     }
 }

@@ -100,7 +100,7 @@ public class GamedayLoader extends AsyncTask<Void,Void,Void> {
                     String teamName = ParseHelper.getTeamNameFromRow(row);
                     short teamPoints = ParseHelper.getTeamPointsFromRow(row);
 
-                    Team t = new Team(teamId, teamName, teamPoints);
+                    Team t = new Team(teamId, teamName, teamPoints, (short )1);
                     teams.add(t);
                     db.teamDao().insertAll(t);
                 }

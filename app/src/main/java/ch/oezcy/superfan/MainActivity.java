@@ -14,12 +14,11 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
-import ch.oezcy.superfan.background.ActualTableLoader;
-import ch.oezcy.superfan.background.GamedayLoader;
-import ch.oezcy.superfan.background.TeamComparer;
 import ch.oezcy.superfan.databinding.ActivityMainBinding;
 import ch.oezcy.superfan.db.AppDatabase;
-import ch.oezcy.superfan.db.accessor.ActualTableAccessor;
+import ch.oezcy.superfan.db.accessor.GameAllSelector;
+import ch.oezcy.superfan.db.accessor.TeamAllSelector;
+
 import ch.oezcy.superfan.db.entity.Game;
 import ch.oezcy.superfan.db.entity.Team;
 import ch.oezcy.superfan.utility.TeamSelection;
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         List<Team> teams = new ArrayList<>();
         try {
-            teams = new ActualTableAccessor(db).execute().get();
+            teams = new TeamAllSelector(db).execute().get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -60,34 +59,34 @@ public class MainActivity extends AppCompatActivity {
 
             table.addView(tableRow);
         }
+    }
 
-
-        //NICHT MEHR HIER LADEN. DAS MACHEN WIR IN BEFORESTARTDATALOADER.
-        /*
+    public void logGames(View v){
         try {
-            List<Team> teams = new ActualTableLoader(db).execute().get();
-
-
-                for(Team team : teams){
-                    TableRow tableRow = (TableRow) LayoutInflater.from(this).inflate(R.layout.tablerow, null);
-                    ((TextView)tableRow.findViewById(R.id.teamName)).setText(team.name);
-                    ((TextView)tableRow.findViewById(R.id.teamPoints)).setText(String.valueOf(team.teamPoints));
-                    ((TextView)tableRow.findViewById(R.id.teamId)).setText(team.id);
-
-                    tableRow.setOnLongClickListener(new TableOnLongClickListener(getApplicationContext(), db));
-
-                    table.addView(tableRow);
-                }
-
+            List<Game> games = new GameAllSelector(db).execute().get();
+            for(Game g: games){
+                System.out.println(g);
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        */
+
 
     }
 
-
-
+    public void logTeams(View v){
+        List<Team> teams = null;
+        try {
+            teams = new TeamAllSelector(db).execute().get();
+            for(Team t : teams){
+                System.out.println(t);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
 }

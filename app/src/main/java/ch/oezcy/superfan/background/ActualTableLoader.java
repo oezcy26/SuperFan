@@ -13,6 +13,9 @@ import ch.oezcy.superfan.db.AppDatabase;
 import ch.oezcy.superfan.db.entity.Team;
 import ch.oezcy.superfan.utility.ParseHelper;
 
+/**
+ * Loads the actual ranking from website and stores in DB.
+ */
 public class ActualTableLoader {
     private AppDatabase db;
 
@@ -31,15 +34,16 @@ public class ActualTableLoader {
 
             if (tablerows != null) {
                 db.teamDao().deleteAll();
-                for (Element row : tablerows) {
-                    String teamId = ParseHelper.getTeamIdFromRow(row);
-                    String teamName = ParseHelper.getTeamNameFromRow(row);
-                    short teamPoints = ParseHelper.getTeamPointsFromRow(row);
+                for (int i = 0; i < tablerows.size(); i++) {
+                    String teamId = ParseHelper.getTeamIdFromRow(tablerows.get(i));
+                    String teamName = ParseHelper.getTeamNameFromRow(tablerows.get(i));
+                    short teamPoints = ParseHelper.getTeamPointsFromRow(tablerows.get(i));
 
-                    Team t = new Team(teamId, teamName, teamPoints);
+                    Team t = new Team(teamId, teamName, teamPoints, (short)(i + 1));
                     teams.add(t);
                     //TODO alle gleichzeitig einfügen -> eine Methode im Dao mit transaction welche löscht und einfügt gleichzeitig. atomar.
                     db.teamDao().insertAll(t);
+
                 }
             }
 

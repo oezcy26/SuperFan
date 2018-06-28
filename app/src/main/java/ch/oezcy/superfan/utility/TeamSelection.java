@@ -1,6 +1,5 @@
 package ch.oezcy.superfan.utility;
 
-import ch.oezcy.superfan.db.entity.Game;
 import ch.oezcy.superfan.db.entity.Team;
 
 public class TeamSelection {

@@ -52,6 +52,8 @@ public class GameLoader{
                 String guestId = getTeamId(gamerows.get(i), GUESTTEAM_COLUMN);
                 String guestName = db.teamDao().getNameById(guestId);
                 boolean played = isGamePlayed(gamerows.get(i));
+
+
                 Game newGame;
 
                 if(played){

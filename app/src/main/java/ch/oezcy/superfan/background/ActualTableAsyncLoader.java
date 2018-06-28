@@ -31,32 +31,7 @@ public class ActualTableAsyncLoader extends AsyncTask<Void, Void, List<Team>> {
 
     @Override
     protected List<Team> doInBackground(Void... strings) {
-        Elements tablerows = null;
-        List<Team> teams = new ArrayList<>();
-        try {
-            Document doc = Jsoup.connect("https://www.fussballdaten.de/tuerkei/").get();
-
-            tablerows = doc.select("div#spieleWidgetTabelle233-container tbody tr");
-
-            if (tablerows != null) {
-                db.teamDao().deleteAll();
-                for (Element row : tablerows) {
-                    String teamId = ParseHelper.getTeamIdFromRow(row);
-                    String teamName = ParseHelper.getTeamNameFromRow(row);
-                    short teamPoints = ParseHelper.getTeamPointsFromRow(row);
-
-                    Team t = new Team(teamId, teamName, teamPoints);
-                    teams.add(t);
-                    db.teamDao().insertAll(t);
-                }
-            }
-
-
-        } catch (IOException e) {
-            // TODO Fehlermeldung
-            e.printStackTrace();
-        }
-
+        List<Team> teams = new ActualTableLoader(db).doIt();
         return teams;
     }
 }
