@@ -16,10 +16,10 @@ import ch.oezcy.superfan.utility.ParseHelper;
 /**
  * Loads the actual ranking from website and stores in DB.
  */
-public class ActualTableLoader {
+public class TeamRankingLoader {
     private AppDatabase db;
 
-    public ActualTableLoader(AppDatabase db) {
+    public TeamRankingLoader(AppDatabase db) {
         this.db = db;
     }
 

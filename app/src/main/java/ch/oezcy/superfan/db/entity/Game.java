@@ -36,7 +36,8 @@ public class Game {
     @ColumnInfo(name = "guest_goals")
     public short guestGoals;
 
-    public String winner; //teamId or null for draw.
+    @ColumnInfo(name = "winner_id")
+    public String winnerId; //teamId or null for draw.
 
     public Game(short gameday, boolean played,  String homeId, String homeName, String guestId, String guestName) {
         this.gameday = gameday;
@@ -52,7 +53,7 @@ public class Game {
     public String toString() {
         String div3 = "\t\t\t|\t";
         String div = "\t|\t";
-        String str = gameday + div + played + div + homeId + div3 + homeName + div + guestId + div3 + guestName + div + homeGoals + div + guestGoals + div + winner;
+        String str = gameday + div + played + div + homeId + div3 + homeName + div + guestId + div3 + guestName + div + homeGoals + div + guestGoals + div + winnerId;
         return str;
     }
 }

@@ -21,6 +21,7 @@ import ch.oezcy.superfan.db.accessor.TeamAllSelector;
 
 import ch.oezcy.superfan.db.entity.Game;
 import ch.oezcy.superfan.db.entity.Team;
+import ch.oezcy.superfan.listener.TableOnLongClickListener;
 import ch.oezcy.superfan.utility.TeamSelection;
 
 public class MainActivity extends AppCompatActivity {

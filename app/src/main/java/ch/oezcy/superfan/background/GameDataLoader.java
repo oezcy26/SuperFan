@@ -14,6 +14,9 @@ import ch.oezcy.superfan.db.entity.Game;
 
 public class GameDataLoader {
 
+    private static final int GAMEDAY_AMOUNT = 34;
+    private static final int GAMES_AMOUNT = 9;
+
     private final short HOMETEAM_COLUMN = 1;
     private final short GUESTTEAM_COLUMN = 3;
 
@@ -26,7 +29,6 @@ public class GameDataLoader {
 
     public void doIt() {
 
-        // extract rows containing a
         Document doc = null;
         try {
             doc = Jsoup.connect("https://www.fussballdaten.de/tuerkei/spielplan/").get();
@@ -35,51 +37,58 @@ public class GameDataLoader {
             e.printStackTrace();
         }
 
-        assert gamedayTables.size() == 33;
+        // gamedayTable is the div representing one gameday (with 9 games)
 
-        // TODO catch case that gamedayTable==null  (no connection)
+        if(gamedayTables.size() != GAMEDAY_AMOUNT){
+            throw new IllegalStateException("UNGÜLTIGE ANZAHL GAMEDAYS. Es wurden nicht 34 Spieltage gezählt");
+        }else if(gamedayTables == null){
+            throw new IllegalStateException("KEINE GAMEDAYS GELADEN. gamedayTables ist NULL");
+        }
+
+        // go though gamedays ..
         for (int i = 0; i < gamedayTables.size(); i++){
-            processGameday((short) i, gamedayTables.get(i));
+            boolean gamedayStarted = processGameday((short)(i + 1), gamedayTables.get(i));
         }
 
     }
 
-    private void processGameday(short gamedaynbr, Element gameday) {
-        //select rows containing the games
+    private boolean processGameday(short gamedaynbr, Element gameday) {
+        //a gamerow contains data for one game
         Elements gamerows = gameday.select("tr[data-key]");
+        if(gamerows.size() != GAMES_AMOUNT){
+            throw new IllegalStateException("UNGÜLTIGE ANZAHL SPIELE AM SPIELTAG. Bei 18 Mannschaften sollten 9 Spiele stattfinden");
+        }
 
         //array including all games for bulk insert.
         Game[] games = new Game[gamerows.size()];
 
         boolean gamedayStarted = false;
 
-        // iteration over all games
+        // iterate over all games and extract the data.
         for(int i = 0; i < gamerows.size(); i++){
             String homeId = getTeamId(gamerows.get(i), HOMETEAM_COLUMN);
             String homeName = db.teamDao().getNameById(homeId);
             String guestId = getTeamId(gamerows.get(i), GUESTTEAM_COLUMN);
             String guestName = db.teamDao().getNameById(guestId);
-            //boolean played = isGamePlayed(gamerows.get(i));
-            boolean played = true;
+            boolean played = isGamePlayed(gamerows.get(i));
 
-
-            Game newGame;
+            Game newGame = new Game(gamedaynbr, played, homeId, homeName, guestId, guestName);
 
             if(played){
-                newGame = extractResults(gamedaynbr, gamerows.get(i), homeId, homeName, guestId, guestName, played);
+                short[] goals = getGoals(gamerows.get(i));
+                newGame.homeGoals = goals[0];
+                newGame.guestGoals = goals[1];
+                newGame.winnerId = getWinner(newGame);
+
                 gamedayStarted = true;
-            }else{
-                newGame = new Game(gamedaynbr, played, homeId, homeName, guestId, guestName);
             }
 
             games[i] = newGame;
 
-            if(!gamedayStarted){
-                //TODO abbrechen, da keine Daten verfügbar, aber nur Rohdaten vorhanden. Einmal muss es durchlaufen.
-            }
         }
-
         db.gameDao().insertAll(games);
+
+        return gamedayStarted;
 
     }
 
@@ -93,39 +102,41 @@ public class GameDataLoader {
         return parts[2];
     }
 
-    @NonNull
-    private Game extractResults(short gameday, Element game, String homeId, String homename, String guestId, String guestName, boolean played) {
-        Game newGame;
-        String score = getScore(game);
-        String[] scores = score.split(":");
+    public short[] getGoals(Element game){
+        short[] scores = new short[2];
+        String score = game.select("td[data-col-seq=4] a").text();
+        //scores is a string like 3:4 ..
 
-        short homeGoals = Short.valueOf(scores[0]);
-        short guestGoals = Short.valueOf(scores[1]);
-        String winner = null;
+        String[] scoresStr = score.split(":");
+        if(scoresStr.length != 2){
+            throw new IllegalStateException("UNGÜLTIGE ANZAHL TOR-WERTE. Es müssten 2 Werte für die 2 Teams vorhanden sein");
+        }
 
-        if(homeGoals > guestGoals){
-            winner = homeId;
-        }else if(guestGoals > homeGoals){
-            winner = guestId;
+        scores[0] = Short.valueOf(scoresStr[0]); //homeGoals
+        scores[1] = Short.valueOf(scoresStr[1]); //guestGoals
+
+        return scores;
+    }
+
+    private String getWinner(Game newGame) {
+        String winnerId = null;
+
+        if(newGame.homeGoals > newGame.guestGoals){
+            winnerId = newGame.homeId;
+        }else if(newGame.guestGoals > newGame.homeGoals){
+            winnerId = newGame.guestId;
             // String stays null for draw
         }
-        newGame = new Game(gameday, played, homeId, homename, guestId, guestName);
-        newGame.homeGoals = homeGoals;
-        newGame.guestGoals = guestGoals;
-        newGame.winner = winner;
-        return newGame;
+
+        return winnerId;
     }
 
-    public String getScore(Element row){
-        String score = row.select("td[data-col-seq=4] a").text();
-        return score;
-    }
 
     public boolean isGamePlayed(Element row){
-        Elements link = row.select("td[data-col-seq=3]");
+        Elements link = row.select("td[data-col-seq=4] a");
         String aClass = link.attr("class");
 
-        if(aClass.equals("ergebnis")){
+        if(aClass.equals("text")){
             //otherwise 'zeit'
             return true;
         }

@@ -1,4 +1,4 @@
-package ch.oezcy.superfan;
+package ch.oezcy.superfan.listener;
 
 import android.content.Context;
 import android.view.View;
@@ -9,7 +9,7 @@ import android.widget.Toast;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import ch.oezcy.superfan.background.TeamComparer;
+import ch.oezcy.superfan.db.accessor.GameForTeamsSelector;
 import ch.oezcy.superfan.db.AppDatabase;
 import ch.oezcy.superfan.db.entity.Game;
 import ch.oezcy.superfan.db.entity.Team;
@@ -48,7 +48,7 @@ public class TableOnLongClickListener implements View.OnLongClickListener {
         // load data for games
         if (selection.getSelectedTeam1() != null && selection.getSelectedTeam2() != null) {
             try {
-                List<Game> games = new TeamComparer(db).execute(selection).get();
+                List<Game> games = new GameForTeamsSelector(db).execute(selection).get();
                 if(games.size() != 2){
                     CharSequence text = "Only one game ?!??";
                     int duration = Toast.LENGTH_LONG;

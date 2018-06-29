@@ -1,4 +1,4 @@
-package ch.oezcy.superfan.background;
+package ch.oezcy.superfan.db.accessor;
 
 import android.os.AsyncTask;
 
@@ -8,11 +8,11 @@ import ch.oezcy.superfan.db.AppDatabase;
 import ch.oezcy.superfan.db.entity.Game;
 import ch.oezcy.superfan.utility.TeamSelection;
 
-public class TeamComparer extends AsyncTask<TeamSelection, Void, List<Game>> {
+public class GameForTeamsSelector extends AsyncTask<TeamSelection, Void, List<Game>> {
 
     private final AppDatabase db;
 
-    public TeamComparer(AppDatabase db){
+    public GameForTeamsSelector(AppDatabase db){
         this.db = db;
     }
 
@@ -31,6 +31,7 @@ public class TeamComparer extends AsyncTask<TeamSelection, Void, List<Game>> {
         }
         System.out.println();
         System.out.println("Searching for : " + selection.getSelectedTeam1().id +" "+ selection.getSelectedTeam2().id);
+
 
         List<Game> games = db.gameDao().getGamesForTeams(selection.getSelectedTeam1().id, selection.getSelectedTeam2().id);
 

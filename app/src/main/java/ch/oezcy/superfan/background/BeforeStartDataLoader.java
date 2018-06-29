@@ -1,9 +1,7 @@
 package ch.oezcy.superfan.background;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 
-import ch.oezcy.superfan.MainActivity;
 import ch.oezcy.superfan.SplashActivity;
 import ch.oezcy.superfan.db.AppDatabase;
 
@@ -22,10 +20,11 @@ public class BeforeStartDataLoader extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        //some heavy processing resulting in a Data String
 
-        new ActualTableLoader(db).doIt();
+        // teams and ranking
+        new TeamRankingLoader(db).doIt();
 
+        // games
         new GameDataLoader(db).doIt();
 
         return null;

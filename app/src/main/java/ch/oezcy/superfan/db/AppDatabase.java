@@ -1,32 +1,23 @@
 package ch.oezcy.superfan.db;
 
-import android.arch.persistence.db.SupportSQLiteDatabase;
+
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import ch.oezcy.superfan.db.dao.GameDao;
-import ch.oezcy.superfan.db.dao.GamedayDao;
 import ch.oezcy.superfan.db.dao.TeamDao;
 import ch.oezcy.superfan.db.entity.Game;
-import ch.oezcy.superfan.db.entity.Gameday;
 import ch.oezcy.superfan.db.entity.Team;
 
-import static ch.oezcy.superfan.ConfigConstants.GAMEDAY_AMOUNT;
 
-
-@Database(entities = {Team.class, Game.class, Gameday.class}, version = 1)
+@Database(entities = {Team.class, Game.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
-
-
-
 
 
     public abstract TeamDao teamDao();
     public abstract GameDao gameDao();
-    public abstract GamedayDao gamedayDao();
 
 
     // code to make it SINGLETON
