@@ -23,9 +23,8 @@ public class TeamRankingLoader {
         this.db = db;
     }
 
-    protected List<Team> doIt() {
+    protected void doIt() {
         Elements tablerows = null;
-        List<Team> teams = new ArrayList<>();
         try {
             Document doc = Jsoup.connect("https://www.fussballdaten.de/tuerkei/").get();
 
@@ -33,18 +32,19 @@ public class TeamRankingLoader {
 
 
             if (tablerows != null) {
-                db.teamDao().deleteAll();
+                //array for bulk insert
+                Team[] teams = new Team[tablerows.size()];
+
                 for (int i = 0; i < tablerows.size(); i++) {
                     String teamId = ParseHelper.getTeamIdFromRow(tablerows.get(i));
                     String teamName = ParseHelper.getTeamNameFromRow(tablerows.get(i));
                     short teamPoints = ParseHelper.getTeamPointsFromRow(tablerows.get(i));
 
                     Team t = new Team(teamId, teamName, teamPoints, (short)(i + 1));
-                    teams.add(t);
-                    //TODO alle gleichzeitig einfügen -> eine Methode im Dao mit transaction welche löscht und einfügt gleichzeitig. atomar.
-                    db.teamDao().insertAll(t);
-
+                    teams[i] = t;
                 }
+                db.teamDao().replaceTeams(teams);
+
             }
 
 
@@ -53,6 +53,5 @@ public class TeamRankingLoader {
             e.printStackTrace();
         }
 
-        return teams;
     }
 }

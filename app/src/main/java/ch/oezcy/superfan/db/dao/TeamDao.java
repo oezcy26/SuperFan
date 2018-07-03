@@ -12,20 +12,25 @@ import java.util.List;
 import ch.oezcy.superfan.db.entity.Team;
 
 @Dao
-public interface TeamDao {
+public abstract class TeamDao {
 
     @Query("SELECT * from team ORDER BY ranking ASC")
-    List<Team> getTeamsInRanking();
+    public abstract List<Team> getTeamsInRanking();
 
     @Query("SELECT name FROM team WHERE id = :id")
-    String getNameById(String id);
+    public abstract String getNameById(String id);
 
     @Transaction
     @Insert
-    void insertAll(Team... teams);
+    public abstract void insertAll(Team... teams);
 
     @Transaction
     @Query("DELETE FROM team")
-    void deleteAll();
+    public abstract void deleteAll();
 
+    @Transaction
+    public void replaceTeams(Team[] teams){
+        deleteAll();
+        insertAll(teams);
+    }
 }

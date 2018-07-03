@@ -27,7 +27,12 @@ public class GameDataLoader {
         this.db = db;
     }
 
+    // Performace-Optimierungen
+    //TODO Falls in DB 9 Spiele für diesen Tag existieren und alle gespielt worden sind, kann das Aktualieren der daten für diesen Spieltag übersprungen werden
+    //TODO Falls alle Daten schon einmal eingefügt wurden (34 tage a 9 spiele vorhanden) - flag setzen-, dann kann nach 2 aufeinanderfolgenden tagen wo noch kein spiel gespielt wurde die Aktualisierung für die restlichen spieltage abgebrochen werden. Es müssen natürlich aber alle einmal eingefügt sein, darum der flag.
+
     public void doIt() {
+        //db.gameDao().deleteAll();
 
         Document doc = null;
         try {
@@ -55,6 +60,7 @@ public class GameDataLoader {
     private boolean processGameday(short gamedaynbr, Element gameday) {
         //a gamerow contains data for one game
         Elements gamerows = gameday.select("tr[data-key]");
+
         if(gamerows.size() != GAMES_AMOUNT){
             throw new IllegalStateException("UNGÜLTIGE ANZAHL SPIELE AM SPIELTAG. Bei 18 Mannschaften sollten 9 Spiele stattfinden");
         }
@@ -86,10 +92,10 @@ public class GameDataLoader {
             games[i] = newGame;
 
         }
-        db.gameDao().insertAll(games);
+
+        db.gameDao().replaceGamedayData(gamedaynbr, games);
 
         return gamedayStarted;
-
     }
 
     public static String getTeamId(Element row, short teamColumn){

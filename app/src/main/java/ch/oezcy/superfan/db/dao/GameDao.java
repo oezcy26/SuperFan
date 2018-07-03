@@ -10,23 +10,32 @@ import java.util.List;
 import ch.oezcy.superfan.db.entity.Game;
 
 @Dao
-public interface GameDao {
+public abstract class GameDao {
 
     @Transaction
     @Insert
-    void insertAll(Game... games);
+    public abstract void insertAll(Game... games);
 
     @Query("SELECT * FROM game ORDER BY gameday ASC")
-    List<Game> loadAllGames();
+    public abstract List<Game> loadAllGames();
 
     @Query("SELECT * FROM game g WHERE g.gameday = :nbr")
-    List<Game> loadAllGamesByGameday(short nbr);
+    public abstract List<Game> loadAllGamesByGameday(short nbr);
+
+    @Query("DELETE FROM game")
+    public abstract void deleteAll();
 
     @Query("DELETE FROM game WHERE gameday = :nbr")
-    void deleteAllByGamedayId(short nbr);
+    public abstract void deleteAllByGameday(short nbr);
 
     @Query("SELECT * FROM game " +
             "WHERE (home_id = :teamId1 AND guest_id = :teamId2) OR (home_id = :teamId2 AND guest_id = :teamId1) " +
             "ORDER BY gameday ASC")
-    List<Game> getGamesForTeams(String teamId1, String teamId2);
+    public abstract List<Game> getGamesForTeams(String teamId1, String teamId2);
+
+    @Transaction
+    public void replaceGamedayData(short gamedaynbr, Game[] games) {
+        deleteAllByGameday(gamedaynbr);
+        insertAll(games);
+    }
 }
