@@ -3,17 +3,15 @@ package ch.oezcy.superfan;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
+import ch.oezcy.superfan.adapter.TeamRankingAdapter;
 import ch.oezcy.superfan.databinding.ActivityMainBinding;
 import ch.oezcy.superfan.db.AppDatabase;
 import ch.oezcy.superfan.db.accessor.GameAllSelector;
@@ -30,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AppDatabase db;
     public static ActivityMainBinding binding;
+    private TeamRankingAdapter teamRankingAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,26 +39,20 @@ public class MainActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         //load the actual table
-        TableLayout table = findViewById(R.id.table);
+        ListView listview = findViewById(R.id.lv_teamrankings);
 
-        List<Team> teams = new ArrayList<>();
         try {
-            teams = new TeamAllSelector(db).execute().get();
+            List<Team> teams = new TeamAllSelector(db).execute().get();
+            teamRankingAdapter = new TeamRankingAdapter(this, teams);
+
+            listview.setAdapter(teamRankingAdapter);
+            listview.setOnItemLongClickListener(new TableOnLongClickListener(this, db));
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        for(Team team : teams){
-            TableRow tableRow = (TableRow) LayoutInflater.from(this).inflate(R.layout.tablerow, null);
-            ((TextView)tableRow.findViewById(R.id.teamName)).setText(team.name);
-            ((TextView)tableRow.findViewById(R.id.teamPoints)).setText(String.valueOf(team.teamPoints));
-            ((TextView)tableRow.findViewById(R.id.teamId)).setText(team.id);
 
-            tableRow.setOnLongClickListener(new TableOnLongClickListener(getApplicationContext(), db));
-
-            table.addView(tableRow);
-        }
     }
 
     public void logGames(View v){

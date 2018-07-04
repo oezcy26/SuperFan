@@ -2,6 +2,7 @@ package ch.oezcy.superfan.listener;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,7 +18,7 @@ import ch.oezcy.superfan.db.entity.Team;
 import static ch.oezcy.superfan.MainActivity.binding;
 import static ch.oezcy.superfan.MainActivity.selection;
 
-public class TableOnLongClickListener implements View.OnLongClickListener {
+public class TableOnLongClickListener implements AdapterView.OnItemLongClickListener {
 
 
     private Context appContext;
@@ -29,19 +30,13 @@ public class TableOnLongClickListener implements View.OnLongClickListener {
     }
 
     @Override
-    public boolean onLongClick(View v) {
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         // extract team-infos from row
-        TableRow row = (TableRow) v;
-        TextView teamidV = (TextView) row.getChildAt(0);
-        TextView teamNameV = (TextView) row.getChildAt(1);
-        TextView teamPointsV = (TextView) row.getChildAt(2);
+        Team team = (Team) parent.getAdapter().getItem(position);
 
-        String teamid = teamidV.getText().toString();
-        String teamName = teamNameV.getText().toString();
-        short teamPoints = Short.parseShort(teamPointsV.getText().toString());
 
         // make new Team and set selection
-        Team newTeam = new Team(teamid, teamName, teamPoints, (short)0);
+        Team newTeam = new Team(team.id, team.name, team.teamPoints, (short)0);
         selection = selection.selectTeam(newTeam);
         binding.setSelection(selection);
 
