@@ -50,6 +50,14 @@ public class MainActivity extends AppCompatActivity {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+
+        //build table with header
+        TableRow headerRow = (TableRow) LayoutInflater.from(this).inflate(R.layout.tablerow, null);
+        ((TextView)headerRow.findViewById(R.id.teamName)).setText("Team");
+        ((TextView)headerRow.findViewById(R.id.teamPoints)).setText("P");
+        ((TextView)headerRow.findViewById(R.id.teamId)).setText("null");
+        table.addView(headerRow);
+
         for(Team team : teams){
             TableRow tableRow = (TableRow) LayoutInflater.from(this).inflate(R.layout.tablerow, null);
             ((TextView)tableRow.findViewById(R.id.teamName)).setText(team.name);
